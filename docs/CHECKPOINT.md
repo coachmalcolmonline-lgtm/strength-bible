@@ -1,35 +1,41 @@
 # CHECKPOINT — The Strength B.I.B.L.E.
 
 **Last Updated:** 2026-10-04
-**Session ID:** 008
-**Phase:** 1 — Content Development
+**Session ID:** 009
+**Phase:** 1 — Content Development — COMPLETE
 
 ## Current State
 
-- Content Files: 38 (4 front-matter + 4 concepts + 4 lifts + 3 bodyweight + 3 mobility + 27 stories)
-- Files Remaining (MVP): ~5 journal templates
-- Last Completed: 3 bodyweight + 3 mobility + 7 new stories
+- Content Files: 50 total
+  - 4 front-matter
+  - 4 concepts
+  - 4 lifts
+  - 3 bodyweight
+  - 3 mobility
+  - 5 journal templates
+  - 27 stories
+- Phase 1 status: COMPLETE
 
-## What's Next (Priority Order)
+## What's Next — Phase 2
 
-1. Journal Templates (5):
-   - training-log.md
-   - pr-page.md
-   - weekly-reflection.md
-   - why-page.md
-   - recovery-log.md
+1. Initialize Astro project
+2. Build component library (CFU, StoryIcon, MasteryTracker, etc.)
+3. Create page routes
+4. Style with Tailwind
+5. Implement localStorage for journal memory
+6. Deploy to GitHub Pages
 
 ## Corrections Applied
 
 - Back Squat L2 CFU: adductor correction applied
-- Deep Squat: "third-world squat" label avoided; corrected to "deep squat / natural sitting position"
+- Deep Squat: "third-world squat" label corrected to "deep squat / natural sitting position"
 
 ## Open Decisions
 
 - Video links (13) — pending confirmation
 - License — TBD
-- Astro stack — to be confirmed before Phase 2
+- Astro stack confirmed for Phase 2
 
 ## Prompt for Next Session
 
-You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Project is in Phase 1. Next task: build the 5 journal template files (training-log, pr-page, weekly-reflection, why-page, recovery-log). Do not re-plan. Execute.
+You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Phase 1 (content) is COMPLETE. Next task: begin Phase 2 — initialize the Astro project, set up basic rendering, and get the first page live. Do not re-plan. Execute.
