@@ -1,28 +1,22 @@
 # CHECKPOINT — The Strength B.I.B.L.E.
 
 **Last Updated:** 2026-10-04
-**Session ID:** 003
+**Session ID:** 004
 **Phase:** 1 — Content Development
 
 ## Current State
 
-- Files Built: 9 (README, build-spec, checkpoint, checkpoint.sh, progressive-overload, 4 stories)
-- Files Remaining (MVP): ~24
-- Last Completed: Phase 1 scaffold pushed to GitHub
-- Repo: git@github.com:coachmalcolmonline-lgtm/strength-bible.git
+- Files Built: 13 (README, build-spec, checkpoint, checkpoint.sh, 4 front-matter, progressive-overload, 4 stories)
+- Files Remaining (MVP): ~20
+- Last Completed: 4 Front Matter files built
 
 ## What's Next (Priority Order)
 
-1. Front Matter files (4):
-   - src/content/front-matter/how-to-use.md
-   - src/content/front-matter/adaptive-system.md
-   - src/content/front-matter/journal-system.md
-   - src/content/front-matter/safety.md
-2. Remaining Concepts (3): technique-priority, autoregulation, deloading
-3. Lifts (4): back-squat, front-squat, deadlift, press
-4. Bodyweight (3): push-up, pull-up, bodyweight-squat
-5. Mobility (3): deep-squat, pass-throughs, worlds-greatest-stretch-1
-6. Journal Templates (5): training-log, pr-page, weekly-reflection, why-page, recovery-log
+1. Remaining Concepts (3): technique-priority, autoregulation, deloading
+2. Lifts (4): back-squat, front-squat, deadlift, press
+3. Bodyweight (3): push-up, pull-up, bodyweight-squat
+4. Mobility (3): deep-squat, pass-throughs, worlds-greatest-stretch-1
+5. Journal Templates (5): training-log, pr-page, weekly-reflection, why-page, recovery-log
 
 ## Open Decisions
 
@@ -39,4 +33,4 @@
 
 ## Prompt for Next Session
 
-You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Project is in Phase 1. Next task: build the 4 Front Matter files following the same format as src/content/concepts/progressive-overload.md. Do not re-plan. Execute.
+You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Project is in Phase 1. Next task: build the 3 remaining concept files (technique-priority, autoregulation, deloading) following the same format as src/content/concepts/progressive-overload.md. Do not re-plan. Execute.
