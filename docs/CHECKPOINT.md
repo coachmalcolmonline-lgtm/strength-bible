@@ -1,18 +1,23 @@
 # CHECKPOINT — The Strength B.I.B.L.E.
 
 **Last Updated:** 2026-10-04
-**Session ID:** 002
+**Session ID:** 003
 **Phase:** 1 — Content Development
 
 ## Current State
 
-- Files Built: 8 (README, build-spec, checkpoint, checkpoint.sh, progressive-overload, 4 stories)
+- Files Built: 9 (README, build-spec, checkpoint, checkpoint.sh, progressive-overload, 4 stories)
 - Files Remaining (MVP): ~24
-- Last Completed: Initial repo scaffold
+- Last Completed: Phase 1 scaffold pushed to GitHub
+- Repo: git@github.com:coachmalcolmonline-lgtm/strength-bible.git
 
 ## What's Next (Priority Order)
 
-1. Front Matter files (4): how-to-use, adaptive-system, journal-system, safety
+1. Front Matter files (4):
+   - src/content/front-matter/how-to-use.md
+   - src/content/front-matter/adaptive-system.md
+   - src/content/front-matter/journal-system.md
+   - src/content/front-matter/safety.md
 2. Remaining Concepts (3): technique-priority, autoregulation, deloading
 3. Lifts (4): back-squat, front-squat, deadlift, press
 4. Bodyweight (3): push-up, pull-up, bodyweight-squat
@@ -21,9 +26,9 @@
 
 ## Open Decisions
 
-- Video links (13) — to be confirmed when video section is built
+- Video links (13) — pending confirmation
 - License — TBD
-- Astro vs. alternative stack — confirm before Phase 2
+- Astro stack — to be confirmed before Phase 2
 
 ## Corrections Log
 
