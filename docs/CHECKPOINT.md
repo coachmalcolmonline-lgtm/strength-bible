@@ -1,14 +1,15 @@
 # CHECKPOINT — The Strength B.I.B.L.E.
 
 **Last Updated:** 2026-10-04
-**Session ID:** 005
+**Session ID:** 006
 **Phase:** 1 — Content Development
 
 ## Current State
 
-- Files Built: 21 (README, build-spec, checkpoint, checkpoint.sh, 4 front-matter, 4 concepts, 9 stories)
-- Files Remaining (MVP): ~16
-- Last Completed: All 4 concepts + 9 stories
+- Files Built: 23 total (README, build-spec, checkpoint, checkpoint.sh, 4 front-matter, 4 concepts, 10 stories, .gitignore)
+- Content Files: 18 (4 front-matter + 4 concepts + 10 stories)
+- Files Remaining (MVP): ~14
+- Last Completed: All 4 concepts + 10 stories
 
 ## What's Next (Priority Order)
 
