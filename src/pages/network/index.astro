@@ -190,15 +190,16 @@ const base = import.meta.env.BASE_URL;
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force('collision', d3.forceCollide().radius(38));
 
-      // Draw links
+      // Draw links — mastery-driven styling
       const link = linkGroup
         .selectAll('line')
         .data(links)
         .enter()
         .append('line')
-        .attr('stroke', '#cbd5e1')
-        .attr('stroke-width', 1.2)
-        .attr('stroke-opacity', 0.6);
+        .attr('stroke', (d) => edgeStroke(d.source, d.target))
+        .attr('stroke-width', (d) => edgeWidth(d.source, d.target))
+        .attr('stroke-opacity', (d) => edgeOpacity(d.source, d.target))
+        .style('transition', 'stroke 400ms ease, stroke-opacity 400ms ease, stroke-width 400ms ease');
 
       // Mastery-based radius and opacity
       function radiusForMastery(level) {
@@ -209,6 +210,33 @@ const base = import.meta.env.BASE_URL;
       function opacityForMastery(level) {
         // 0 → 0.3 (dim), 1+ → 1 (full)
         return level === 0 ? 0.3 : 1;
+      }
+
+      // Edge opacity based on mastery of both endpoints
+      function edgeOpacity(source, target) {
+        const sMastered = (source.mastery || 0) >= 1;
+        const tMastered = (target.mastery || 0) >= 1;
+        if (sMastered && tMastered) return 1.0;   // both mastered
+        if (sMastered || tMastered) return 0.4;   // one mastered
+        return 0.1;                                // neither
+      }
+
+      function edgeStroke(source, target) {
+        const sMastered = (source.mastery || 0) >= 1;
+        const tMastered = (target.mastery || 0) >= 1;
+        if (sMastered && tMastered) {
+          // Use category color of the source node
+          return CATEGORY_COLORS[source.category] || '#64748b';
+        }
+        return '#cbd5e1'; // slate-300 for un-mastered edges
+      }
+
+      function edgeWidth(source, target) {
+        const sMastered = (source.mastery || 0) >= 1;
+        const tMastered = (target.mastery || 0) >= 1;
+        if (sMastered && tMastered) return 2.5;
+        if (sMastered || tMastered) return 1.5;
+        return 1.0;
       }
 
       // Draw nodes
@@ -257,8 +285,10 @@ const base = import.meta.env.BASE_URL;
         })
         .on('mouseout', function () {
           node.style('opacity', (n) => opacityForMastery(n.mastery || 0));
-          link.style('stroke-opacity', 0.6);
-          link.style('stroke', '#cbd5e1');
+          link
+            .style('stroke-opacity', (l) => edgeOpacity(l.source, l.target))
+            .style('stroke', (l) => edgeStroke(l.source, l.target))
+            .style('stroke-width', (l) => edgeWidth(l.source, l.target));
           label.style('opacity', (n) => opacityForMastery(n.mastery || 0));
           hoverEl.textContent = 'Nothing selected';
         })
@@ -365,6 +395,14 @@ const base = import.meta.env.BASE_URL;
           .duration(400)
           .style('opacity', (d) => opacityForMastery(d.mastery || 0));
 
+        // Live edge reveal — fade and recolor edges based on new mastery
+        link
+          .transition()
+          .duration(400)
+          .style('stroke-opacity', (l) => edgeOpacity(l.source, l.target))
+          .style('stroke', (l) => edgeStroke(l.source, l.target))
+          .style('stroke-width', (l) => edgeWidth(l.source, l.target));
+
         // Refresh sidebar
         const updatedAny = nodes.filter((n) => n.mastery >= 1).length;
         const updatedAll = nodes.filter((n) => n.mastery >= 4).length;
@@ -384,8 +422,10 @@ const base = import.meta.env.BASE_URL;
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           node.style('opacity', (n) => opacityForMastery(n.mastery || 0));
-          link.style('stroke-opacity', 0.6);
-          link.style('stroke', '#cbd5e1');
+          link
+            .style('stroke-opacity', (l) => edgeOpacity(l.source, l.target))
+            .style('stroke', (l) => edgeStroke(l.source, l.target))
+            .style('stroke-width', (l) => edgeWidth(l.source, l.target));
           label.style('opacity', (n) => opacityForMastery(n.mastery || 0));
           hoverEl.textContent = 'Nothing selected';
         }
