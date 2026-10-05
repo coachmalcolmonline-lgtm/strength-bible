@@ -318,6 +318,10 @@ sources:
   - "Meeusen et al. (2013) -- Overtraining consensus statement"
   - "Roberts et al. (2015) -- Cold water immersion and hypertrophy"
   - "NSCA Essentials of Strength Training and Conditioning (4th ed.)"
+related_concepts:
+  - measurable-repeatable
+  - autoregulation
+  - deloading
 ---
 
 # Recovery Between Sessions

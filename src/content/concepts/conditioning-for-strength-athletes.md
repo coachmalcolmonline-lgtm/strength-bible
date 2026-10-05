@@ -298,6 +298,10 @@ sources:
   - "Schumann et al. (2022) -- Concurrent training in athletes"
   - "Coffey & Hawley (2007) -- Molecular basis of concurrent training"
   - "NSCA Essentials of Strength Training and Conditioning (4th ed.)"
+related_concepts:
+  - scaling
+  - measurable-repeatable
+  - autoregulation
 ---
 
 # Conditioning for Strength Athletes

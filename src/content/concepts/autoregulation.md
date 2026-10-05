@@ -176,6 +176,11 @@ sources:
   - "Zourdos et al. (2016) — RPE validity in resistance training"
   - "Helms et al. (2016, 2018) — Autoregulated training outcomes"
   - "NSCA Essentials of Strength Training and Conditioning (4th ed.)"
+related_concepts:
+  - measurable-repeatable
+  - scaling
+  - deloading
+  - progressive-overload
 ---
 
 # Autoregulation

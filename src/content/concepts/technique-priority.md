@@ -136,6 +136,9 @@ sources:
   - "NSCA Essentials of Strength Training and Conditioning (4th ed.)"
   - "Zatsiorsky & Kraemer — Science and Practice of Strength Training"
   - "Siff & Verkhoshansky — Supertraining"
+related_concepts:
+  - measurable-repeatable
+  - scaling
 ---
 
 # Technique Priority

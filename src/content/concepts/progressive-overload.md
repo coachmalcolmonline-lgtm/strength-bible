@@ -127,6 +127,11 @@ sources:
   - "Rhea et al. (2003) — Periodization meta-analysis"
   - "Peterson et al. (2005) — Dose-response meta-analysis"
   - "Zourdos et al. (2016) — RPE validity in resistance training"
+related_concepts:
+  - scaling
+  - measurable-repeatable
+  - autoregulation
+  - deloading
 ---
 
 # Progressive Overload

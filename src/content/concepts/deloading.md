@@ -179,6 +179,11 @@ sources:
   - "Kreider et al. — Overreaching and overtraining"
   - "Meeusen et al. — Overtraining syndrome consensus statement"
   - "Stone, Fleck, Kraemer — Periodization literature"
+related_concepts:
+  - autoregulation
+  - scaling
+  - progressive-overload
+  - measurable-repeatable
 ---
 
 # Deloading

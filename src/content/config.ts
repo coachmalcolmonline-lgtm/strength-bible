@@ -25,6 +25,7 @@ const concepts = defineCollection({
     journal: z.any().optional(),
     sources: z.array(z.string()).optional(),
     videos: z.array(videoSchema).optional(),
+    related_concepts: z.array(z.string()).optional(),
   }),
 });
 
