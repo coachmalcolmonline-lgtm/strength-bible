@@ -3,6 +3,17 @@ import '../styles/global.css';
 interface Props { title: string; }
 const { title } = Astro.props;
 const base = import.meta.env.BASE_URL;
+
+const navLinks = [
+  { href: base, label: 'Home' },
+  { href: `${base}/concepts`, label: 'Concepts' },
+  { href: `${base}/programs`, label: 'Programs' },
+  { href: `${base}/lifts`, label: 'Lifts' },
+  { href: `${base}/bodyweight`, label: 'Bodyweight' },
+  { href: `${base}/mobility`, label: 'Mobility' },
+  { href: `${base}/journal`, label: 'Journal' },
+  { href: `${base}/mastery`, label: 'Mastery' },
+];
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -13,26 +24,28 @@ const base = import.meta.env.BASE_URL;
     <title>{title} — The Strength B.I.B.L.E.</title>
   </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white px-6 py-4 shadow-md sticky top-0 z-50">
-      <div class="max-w-5xl mx-auto flex items-center justify-between">
-        <a href={base} class="text-xl font-bold tracking-tight hover:text-amber-300 transition">🏋️ The Strength B.I.B.L.E.</a>
-        <nav class="hidden md:flex gap-4 text-sm">
-          <a href={base} class="hover:text-amber-300 transition">Home</a>
-          <a href={`${base}/concepts`} class="hover:text-amber-300 transition">Concepts</a>
-          <a href={`${base}/programs`} class="hover:text-amber-300 transition">Programs</a>
-          <a href={`${base}/lifts`} class="hover:text-amber-300 transition">Lifts</a>
-          <a href={`${base}/bodyweight`} class="hover:text-amber-300 transition">Bodyweight</a>
-          <a href={`${base}/mobility`} class="hover:text-amber-300 transition">Mobility</a>
-          <a href={`${base}/journal`} class="hover:text-amber-300 transition">Journal</a>
-          <a href={`${base}/mastery`} class="hover:text-amber-300 transition font-semibold text-amber-300">Mastery</a>
-        </nav>
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href={base} class="text-lg md:text-xl font-bold tracking-tight hover:text-amber-300 transition whitespace-nowrap">🏋️ Strength B.I.B.L.E.</a>
       </div>
+      <nav class="bg-slate-800 border-t border-slate-700 overflow-x-auto">
+        <div class="max-w-5xl mx-auto px-4 flex gap-1 text-sm whitespace-nowrap">
+          {navLinks.map(link => (
+            <a
+              href={link.href}
+              class="px-3 py-2.5 hover:text-amber-300 hover:bg-slate-700 transition rounded-sm"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </nav>
     </header>
-    <main class="flex-1 max-w-5xl mx-auto px-6 py-12 w-full">
+    <main class="flex-1 max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full">
       <slot />
     </main>
-    <footer class="border-t border-slate-200 px-6 py-8 text-sm text-slate-500">
-      <div class="max-w-5xl mx-auto flex items-center justify-between">
+    <footer class="border-t border-slate-200 px-4 md:px-6 py-6 md:py-8 text-sm text-slate-500">
+      <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <span>The Strength B.I.B.L.E. — Basic Instructions Before Lifting Everything</span>
         <a href="#" class="hover:text-amber-600">↑ Back to top</a>
       </div>
