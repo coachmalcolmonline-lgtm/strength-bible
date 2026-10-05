@@ -5,6 +5,7 @@ const concepts = (await getCollection('concepts')).sort((a, b) => (a.data.order 
 const lifts = (await getCollection('lifts')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const bodyweight = (await getCollection('bodyweight')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const mobility = (await getCollection('mobility')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const programs = (await getCollection('programs')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const base = import.meta.env.BASE_URL;
 
 const sections = [
@@ -16,9 +17,28 @@ const sections = [
 ---
 <BaseLayout title="Mastery Tracker">
   <h1 class="text-4xl font-bold mb-4">Mastery Tracker</h1>
-  <p class="text-slate-600 mb-10 max-w-2xl">
-    Your progress across every concept and movement. Level 1 = 8th grade, Level 4 = PhD depth. Levels unlock as you pass each Check for Understanding.
+  <p class="text-slate-600 mb-6 max-w-2xl">
+    Your progress across every concept and movement. Levels unlock as you pass each Check for Understanding.
   </p>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
+    <div class="p-4 bg-white border border-slate-200 rounded-lg">
+      <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Concepts Mastered</div>
+      <div class="text-2xl font-bold" id="stat-concepts">0</div>
+    </div>
+    <div class="p-4 bg-white border border-slate-200 rounded-lg">
+      <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Journal Entries</div>
+      <div class="text-2xl font-bold" id="stat-entries">0</div>
+    </div>
+    <div class="p-4 bg-white border border-slate-200 rounded-lg">
+      <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Stories Opened</div>
+      <div class="text-2xl font-bold" id="stat-stories">0</div>
+    </div>
+    <div class="p-4 bg-white border border-slate-200 rounded-lg">
+      <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Current Streak</div>
+      <div class="text-2xl font-bold" id="stat-streak">0</div>
+    </div>
+  </div>
 
   <div id="mastery-root">
     {sections.map(section => (
@@ -41,6 +61,21 @@ const sections = [
         </div>
       </section>
     ))}
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4 pb-2 border-b border-slate-200">Programs</h2>
+      <div class="space-y-3">
+        {programs.map(item => (
+          <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-lg">
+            <a href={`${base}/programs/${item.slug}`} class="flex items-center gap-3 hover:text-amber-600 transition">
+              <span class="text-2xl">{item.data.icon}</span>
+              <span class="font-medium">{item.data.title}</span>
+            </a>
+            <span class="program-status text-xs text-slate-400" data-program={item.slug}>Not started</span>
+          </div>
+        ))}
+      </div>
+    </section>
   </div>
 
   <section class="mt-16 pt-8 border-t border-slate-200">
@@ -64,15 +99,48 @@ const sections = [
 <script>
   const PREFIX = 'bible:';
 
-  function getMastery() {
+  function readMastery() {
     try {
       const raw = localStorage.getItem(PREFIX + 'mastery');
       return raw ? JSON.parse(raw) : {};
     } catch { return {}; }
   }
+  function readStories() {
+    try {
+      const raw = localStorage.getItem(PREFIX + 'stories');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+  function readJournal() {
+    try {
+      const raw = localStorage.getItem(PREFIX + 'journal');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+
+  function computeStreak(entries: any[]): number {
+    if (entries.length === 0) return 0;
+    const dates = Array.from(new Set(entries.map(e => e.date))).sort().reverse();
+    const today = new Date(); today.setHours(0,0,0,0);
+    let streak = 0;
+    let cursor = new Date(today);
+    for (const d of dates) {
+      const entryDate = new Date(d);
+      entryDate.setHours(0,0,0,0);
+      const diff = Math.round((cursor.getTime() - entryDate.getTime()) / 86400000);
+      if (diff === 0 || diff === 1) {
+        streak++;
+        cursor = entryDate;
+      } else break;
+    }
+    return streak;
+  }
 
   function paint() {
-    const mastery = getMastery();
+    const mastery = readMastery();
+    const stories = readStories();
+    const journal = readJournal();
+
     document.querySelectorAll('.mastery-row').forEach((row) => {
       const slug = (row as HTMLElement).dataset.slug || '';
       const level = mastery[slug] ?? 0;
@@ -86,6 +154,27 @@ const sections = [
         }
       });
     });
+
+    // Program status
+    document.querySelectorAll('.program-status').forEach((el) => {
+      const program = (el as HTMLElement).dataset.program || '';
+      const entries = journal.filter((e: any) => e.templateSlug === `training-log-${program}` || e.templateSlug === `training-log-${program.replace('-', '')}`);
+      const count = entries.length;
+      if (count > 0) {
+        el.textContent = `${count} entr${count === 1 ? 'y' : 'ies'}`;
+        el.className = 'program-status text-xs text-green-600 font-medium';
+      } else {
+        el.textContent = 'Not started';
+        el.className = 'program-status text-xs text-slate-400';
+      }
+    });
+
+    // Stats
+    const conceptsMastered = Object.entries(mastery).filter(([_, lvl]) => (lvl as number) >= 1).length;
+    document.getElementById('stat-concepts')!.textContent = String(conceptsMastered);
+    document.getElementById('stat-entries')!.textContent = String(journal.length);
+    document.getElementById('stat-stories')!.textContent = String(stories.length);
+    document.getElementById('stat-streak')!.textContent = String(computeStreak(journal));
   }
 
   paint();
@@ -96,9 +185,9 @@ const sections = [
     const data = {
       version: 1,
       exportedAt: new Date().toISOString(),
-      mastery: (() => { try { const r = localStorage.getItem(PREFIX+'mastery'); return r ? JSON.parse(r) : {}; } catch { return {}; } })(),
-      stories: (() => { try { const r = localStorage.getItem(PREFIX+'stories'); return r ? JSON.parse(r) : []; } catch { return []; } })(),
-      journal: (() => { try { const r = localStorage.getItem(PREFIX+'journal'); return r ? JSON.parse(r) : []; } catch { return []; } })(),
+      mastery: readMastery(),
+      stories: readStories(),
+      journal: readJournal(),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);

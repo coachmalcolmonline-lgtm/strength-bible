@@ -1,0 +1,144 @@
+---
+interface Props {
+  templateSlug: string;
+}
+const { templateSlug } = Astro.props;
+---
+<div class="journal-form" data-template-slug={templateSlug}>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Date</label>
+      <input type="date" name="date" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Readiness (1–10)</label>
+      <input type="number" name="readiness" min="1" max="10" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" />
+    </div>
+  </div>
+
+  <div class="space-y-4 mb-4">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Lift / Exercise</label>
+      <input type="text" name="lift" placeholder="Back Squat" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" />
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Weight</label>
+        <input type="number" name="weight" placeholder="135" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Sets</label>
+        <input type="number" name="sets" placeholder="3" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Reps</label>
+        <input type="number" name="reps" placeholder="5" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">RPE</label>
+        <input type="number" name="rpe" min="1" max="10" placeholder="8" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none" />
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+    <textarea name="notes" rows="3" placeholder="How did it feel?" class="w-full p-2 border border-slate-300 rounded-md focus:border-amber-400 focus:outline-none"></textarea>
+  </div>
+
+  <button type="button" class="save-entry-btn px-4 py-2 bg-slate-900 text-white rounded-md text-sm hover:bg-slate-700 transition">Save Entry</button>
+  <div class="save-status mt-3 text-sm"></div>
+</div>
+
+<div class="entries-list mt-10">
+  <h3 class="text-lg font-semibold mb-4">Your Entries</h3>
+  <div class="entries-content space-y-2"></div>
+</div>
+
+<script>
+  const PREFIX = 'bible:';
+
+  function getEntries(): any[] {
+    try {
+      const raw = localStorage.getItem(PREFIX + 'journal');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+
+  function saveEntries(entries: any[]) {
+    localStorage.setItem(PREFIX + 'journal', JSON.stringify(entries));
+  }
+
+  function renderEntries(templateSlug: string) {
+    const all = getEntries();
+    const filtered = all.filter(e => e.templateSlug === templateSlug).sort((a, b) => b.date.localeCompare(a.date));
+    const container = document.querySelector('.entries-content');
+    if (!container) return;
+    if (filtered.length === 0) {
+      container.innerHTML = '<p class="text-sm text-slate-500">No entries yet. Add your first one above.</p>';
+      return;
+    }
+    container.innerHTML = filtered.map(e => `
+      <div class="p-4 bg-white border border-slate-200 rounded-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-medium">${e.date}</span>
+          <button class="delete-entry-btn text-xs text-red-600 hover:text-red-800" data-id="${e.id}">Delete</button>
+        </div>
+        <div class="text-sm text-slate-600">
+          ${e.data.lift ? `<div><strong>${e.data.lift}</strong> — ${e.data.weight || '?'} × ${e.data.sets || '?'} × ${e.data.reps || '?'} @ RPE ${e.data.rpe || '?'}</div>` : ''}
+          ${e.data.readiness ? `<div>Readiness: ${e.data.readiness}/10</div>` : ''}
+          ${e.data.notes ? `<div class="mt-2 italic">${e.data.notes}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+
+    // Save entry
+    if (target.classList.contains('save-entry-btn')) {
+      const form = target.closest('.journal-form') as HTMLElement;
+      if (!form) return;
+      const templateSlug = form.dataset.templateSlug || '';
+      const inputs = form.querySelectorAll('input, textarea') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
+      const data: Record<string, any> = {};
+      inputs.forEach(input => {
+        if (input.name) data[input.name] = input.value;
+      });
+      if (!data.date) {
+        const status = form.querySelector('.save-status') as HTMLElement;
+        if (status) status.textContent = 'Please enter a date.';
+        return;
+      }
+      const entries = getEntries();
+      entries.push({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        templateSlug,
+        date: data.date,
+        data,
+      });
+      saveEntries(entries);
+      const status = form.querySelector('.save-status') as HTMLElement;
+      if (status) status.textContent = '✓ Entry saved.';
+      inputs.forEach(i => { if (i.name !== 'date') i.value = ''; });
+      renderEntries(templateSlug);
+    }
+
+    // Delete entry
+    if (target.classList.contains('delete-entry-btn')) {
+      const id = target.dataset.id;
+      if (!id) return;
+      if (!confirm('Delete this entry?')) return;
+      const entries = getEntries().filter(e => e.id !== id);
+      saveEntries(entries);
+      const form = document.querySelector('.journal-form') as HTMLElement;
+      if (form) renderEntries(form.dataset.templateSlug || '');
+    }
+  });
+
+  const form = document.querySelector('.journal-form') as HTMLElement;
+  if (form) {
+    renderEntries(form.dataset.templateSlug || '');
+  }
+</script>
