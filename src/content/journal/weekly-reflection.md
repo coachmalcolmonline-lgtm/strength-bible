@@ -1,7 +1,7 @@
 ---
 title: "Weekly Reflection"
 category: "Journal"
-icon: "🌙"
+icon: "📅"
 order: 3
 type: "template"
 frequency: "adaptive"

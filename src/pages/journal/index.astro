@@ -3,6 +3,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 const items = (await getCollection('journal')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const base = import.meta.env.BASE_URL;
+
+// Interactive pages that live as real Astro routes, not content-collection entries
+const interactive = [
+  { title: 'Story Tracker', icon: '📖', href: `${base}/journal/story-tracker`, order: 8 },
+  { title: 'Mastery Tracker', icon: '🗺️', href: `${base}/journal/mastery-tracker`, order: 9 },
+];
+
+// Merge and re-sort so they slot into the right position
+const cards = [
+  ...items.map(item => ({
+    title: item.data.title,
+    icon: item.data.icon,
+    href: `${base}/journal/${item.slug}`,
+    order: item.data.order ?? 99,
+  })),
+  ...interactive,
+].sort((a, b) => a.order - b.order);
 ---
 <BaseLayout title="Journal">
   <h1 class="text-4xl font-bold mb-8">The Living Journal</h1>
@@ -10,11 +27,11 @@ const base = import.meta.env.BASE_URL;
     Log your training. Track your PRs. Reflect on what's working. Set goals. Track recovery.
   </p>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {items.map(item => (
-      <a href={`${base}/journal/${item.slug}`} class="block p-5 bg-white rounded-lg border border-slate-200 hover:border-amber-400 hover:shadow-md transition">
+    {cards.map(card => (
+      <a href={card.href} class="block p-5 bg-white rounded-lg border border-slate-200 hover:border-amber-400 hover:shadow-md transition">
         <div class="flex items-center gap-3 mb-2">
-          <span class="text-2xl">{item.data.icon}</span>
-          <h3 class="text-lg font-semibold">{item.data.title}</h3>
+          <span class="text-2xl">{card.icon}</span>
+          <h3 class="text-lg font-semibold">{card.title}</h3>
         </div>
       </a>
     ))}

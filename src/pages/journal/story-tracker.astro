@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryBoard from '../../components/StoryBoard.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Story Tracker">
+  <article class="max-w-3xl">
+    <a href={`${base}/journal`} class="text-sm text-slate-500 hover:text-amber-600">&larr; Back to Journal</a>
+    <header class="mt-6 mb-10">
+      <div class="text-5xl mb-3">📖</div>
+      <h1 class="text-4xl font-bold tracking-tight">Story Tracker</h1>
+    </header>
+    <div class="prose prose-slate max-w-none text-slate-700 leading-relaxed">
+      <p>Every story you open gets tracked here. Six weeks later, the tracker nudges you to revisit it. Same story, new meaning — because you've changed.</p>
+
+      <h2>Why Revisit Stories?</h2>
+      <p>A story is never just a story. The first time you hear it, you hear the surface. The second time, you hear the lesson. The third time, you hear yourself.</p>
+
+      <h2>Your Story Board</h2>
+    </div>
+
+    <StoryBoard />
+
+    <div class="prose prose-slate max-w-none text-slate-700 leading-relaxed mt-10">
+      <h2>How It Works</h2>
+      <ul>
+        <li>Every time you open a story on a concept page, we log the date.</li>
+        <li>After 42 days (6 weeks), the story gets a "revisit" flag.</li>
+        <li>When you revisit, you can add a note below: what did it mean this time?</li>
+      </ul>
+
+      <h2>Revisit Notes</h2>
+      <p><em>After you re-read a story, jot down what shifted.</em></p>
+
+      <p><strong>Story:</strong> __________________ <strong>Date:</strong> __________</p>
+      <p><strong>What it meant the first time:</strong></p>
+      <p>_________________________________________________________________</p>
+      <p><strong>What it means now:</strong></p>
+      <p>_________________________________________________________________</p>
+
+      <hr />
+
+      <p><strong>Story:</strong> __________________ <strong>Date:</strong> __________</p>
+      <p><strong>What it meant the first time:</strong></p>
+      <p>_________________________________________________________________</p>
+      <p><strong>What it means now:</strong></p>
+      <p>_________________________________________________________________</p>
+    </div>
+  </article>
+</BaseLayout>

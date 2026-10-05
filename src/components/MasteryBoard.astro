@@ -1,0 +1,71 @@
+---
+// Reads localStorage.bible:mastery, renders the athlete's mastery grid
+---
+
+<div id="mastery-board-root">
+  <div id="mastery-board" class="my-8 p-6 bg-slate-50 border border-slate-200 rounded-lg">
+    <div class="text-sm text-slate-500 italic">Loading mastery data…</div>
+  </div>
+  <div id="mastery-empty" class="hidden my-8 p-6 bg-slate-50 border border-slate-200 rounded-lg text-center">
+    <div class="text-3xl mb-2">🗺️</div>
+    <div class="text-sm text-slate-600">No concepts passed yet. Answer a Level 1 CFU on any concept page to start your map.</div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const PREFIX = 'bible:';
+
+    function getMastery() {
+      try {
+        const raw = localStorage.getItem(PREFIX + 'mastery');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+
+    function render() {
+      const board = document.getElementById('mastery-board');
+      const empty = document.getElementById('mastery-empty');
+      if (!board) return;
+
+      const mastery = getMastery();
+      const slugs = Object.keys(mastery).sort();
+
+      if (slugs.length === 0) {
+        board.classList.add('hidden');
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+
+      board.classList.remove('hidden');
+      if (empty) empty.classList.add('hidden');
+
+      let rows = '';
+      for (let i = 0; i < slugs.length; i++) {
+        const slug = slugs[i];
+        const level = mastery[slug] || 0;
+        let cells = '';
+        for (let l = 1; l <= 4; l++) {
+          const passed = l <= level;
+          const cls = passed
+            ? 'bg-green-500 text-white'
+            : 'bg-slate-200 text-slate-400';
+          const sym = passed ? '✓' : '·';
+          cells += '<span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ' + cls + '">' + sym + '</span>';
+        }
+        rows += '<div class="flex items-center justify-between py-2 border-b border-slate-200 last:border-b-0">'
+          + '<span class="text-sm font-medium text-slate-800">' + slug + '</span>'
+          + '<span class="flex gap-1">' + cells + '</span>'
+          + '</div>';
+      }
+
+      board.innerHTML = '<div class="text-sm font-semibold text-slate-700 mb-3">Concepts touched ('
+        + slugs.length + ')</div>' + rows;
+    }
+
+    render();
+    window.addEventListener('storage', function (e) {
+      if (e.key === PREFIX + 'mastery') render();
+    });
+  })();
+</script>
