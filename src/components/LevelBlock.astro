@@ -1,0 +1,25 @@
+---
+import CFU from './CFU.astro';
+const { level, index } = Astro.props;
+const levelNumber = level.level ?? index + 1;
+const levelNames = { 1: '8th Grade', 2: 'High School Senior', 3: 'College', 4: 'PhD / Scientific Depth' };
+---
+<section class="mb-12" id={`level-${levelNumber}`}>
+  <div class="flex items-center gap-3 mb-4">
+    <span class="px-3 py-1 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-full">Level {levelNumber}</span>
+    <span class="text-sm text-slate-500">{levelNames[levelNumber]}</span>
+  </div>
+  <h2 class="text-2xl font-semibold mb-4">{level.title}</h2>
+  <div class="prose prose-slate max-w-none whitespace-pre-line text-slate-700 leading-relaxed mb-6">{level.body}</div>
+  {level.cfu && <CFU question={level.cfu.question} options={level.cfu.options} correctIndex={level.cfu.correct_index} />}
+  {level.stories && level.stories.length > 0 && (
+    <div class="mt-6 flex flex-wrap gap-3">
+      {level.stories.map((story) => (
+        <a href={`${import.meta.env.BASE_URL}/stories/${story.id}`} class="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-slate-700 transition">
+          <span>{story.icon}</span>
+          <span>{story.title}</span>
+        </a>
+      ))}
+    </div>
+  )}
+</section>

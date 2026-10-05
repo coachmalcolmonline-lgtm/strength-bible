@@ -1,0 +1,49 @@
+---
+interface Props {
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
+const { question, options, correctIndex } = Astro.props;
+---
+<div class="cfu mt-8 p-6 bg-amber-50 border border-amber-200 rounded-lg">
+  <div class="text-xs uppercase tracking-wider text-amber-700 font-semibold mb-2">Check for Understanding</div>
+  <p class="text-lg font-medium text-slate-900 mb-4">{question}</p>
+  <div class="space-y-2">
+    {options.map((option, i) => (
+      <button
+        class="cfu-option w-full text-left p-3 rounded-md border border-slate-300 bg-white hover:border-amber-400 hover:bg-amber-50 transition text-slate-800"
+        data-correct={i === correctIndex ? "true" : "false"}
+      >
+        {option}
+      </button>
+    ))}
+  </div>
+  <div class="cfu-result mt-4 hidden text-sm font-semibold"></div>
+</div>
+<script>
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    if (!target.classList.contains('cfu-option')) return;
+    const cfu = target.closest('.cfu');
+    if (!cfu) return;
+    const isCorrect = target.dataset.correct === 'true';
+    const result = cfu.querySelector('.cfu-result');
+    cfu.querySelectorAll('.cfu-option').forEach((btn) => {
+      btn.disabled = true;
+      btn.classList.remove('bg-white');
+    });
+    if (isCorrect) {
+      target.classList.add('bg-green-100', 'border-green-500');
+      result.textContent = 'Correct. Next level unlocked.';
+      result.className = 'cfu-result mt-4 text-sm font-semibold text-green-700';
+    } else {
+      target.classList.add('bg-red-100', 'border-red-500');
+      cfu.querySelectorAll('.cfu-option').forEach((btn) => {
+        if (btn.dataset.correct === 'true') btn.classList.add('bg-green-100', 'border-green-500');
+      });
+      result.textContent = 'Not quite. Correct answer shown in green.';
+      result.className = 'cfu-result mt-4 text-sm font-semibold text-red-700';
+    }
+  });
+</script>

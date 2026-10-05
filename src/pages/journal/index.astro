@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+const items = (await getCollection('journal')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Journal">
+  <h1 class="text-4xl font-bold mb-8">The Living Journal</h1>
+  <p class="text-slate-600 mb-10 max-w-2xl">
+    Log your training. Track your PRs. Reflect on what's working. Set goals. Track recovery.
+  </p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {items.map(item => (
+      <a href={`${base}/journal/${item.slug}`} class="block p-5 bg-white rounded-lg border border-slate-200 hover:border-amber-400 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">{item.data.icon}</span>
+          <h3 class="text-lg font-semibold">{item.data.title}</h3>
+        </div>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
