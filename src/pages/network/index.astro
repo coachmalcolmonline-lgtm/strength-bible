@@ -1,0 +1,307 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Concept Network">
+  <div class="max-w-7xl mx-auto">
+    <a href={base} class="text-sm text-slate-500 hover:text-amber-600">&larr; Back to Home</a>
+
+    <header class="mt-6 mb-8">
+      <div class="text-5xl mb-3">🕸️</div>
+      <h1 class="text-4xl font-bold tracking-tight">Concept Network</h1>
+      <p class="text-slate-600 mt-2 max-w-2xl">
+        Every concept in the B.I.B.L.E., connected to the concepts it relates to. Click a node to open that concept. Hover to highlight its connections.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1 order-2 lg:order-1">
+        <div class="p-5 bg-slate-50 border border-slate-200 rounded-lg sticky top-24">
+          <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">
+            Legend
+          </div>
+
+          <div class="space-y-2 mb-5">
+            <div class="flex items-center gap-2 text-sm">
+              <span class="inline-block w-3 h-3 rounded-full" style="background: #2563eb;"></span>
+              <span class="text-slate-700">Foundational</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="inline-block w-3 h-3 rounded-full" style="background: #16a34a;"></span>
+              <span class="text-slate-700">Goal Tracks</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="inline-block w-3 h-3 rounded-full" style="background: #dc2626;"></span>
+              <span class="text-slate-700">Conditioning</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="inline-block w-3 h-3 rounded-full" style="background: #1e293b;"></span>
+              <span class="text-slate-700">Sport-Specific</span>
+            </div>
+          </div>
+
+          <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">
+            Stats
+          </div>
+          <div id="network-stats" class="text-sm text-slate-700 mb-5">
+            Loading...
+          </div>
+
+          <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">
+            Hover a node
+          </div>
+          <div id="network-hover" class="text-sm text-slate-600 italic">
+            Nothing selected
+          </div>
+        </div>
+      </aside>
+
+      <!-- Graph canvas -->
+      <div class="lg:col-span-3 order-1 lg:order-2">
+        <div
+          id="network-container"
+          class="bg-white border border-slate-200 rounded-lg overflow-hidden"
+          style="height: 720px; position: relative;"
+        >
+          <div id="network-loading" class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm">
+            Loading network...
+          </div>
+          <svg id="network-svg" style="width: 100%; height: 100%; display: block;"></svg>
+        </div>
+
+        <p class="text-xs text-slate-500 mt-3">
+          Node size and color will grow with your mastery in future updates.
+          Mastered concepts will light up their connections to other concepts.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- D3 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+  <!-- Graph script -->
+  <script>
+    (async function () {
+      const svg = document.getElementById('network-svg');
+      const container = document.getElementById('network-container');
+      const loading = document.getElementById('network-loading');
+      const statsEl = document.getElementById('network-stats');
+      const hoverEl = document.getElementById('network-hover');
+
+      if (!svg || !container) return;
+
+      // Wait for D3 to be available
+      let tries = 0;
+      while (typeof d3 === 'undefined' && tries < 50) {
+        await new Promise((r) => setTimeout(r, 100));
+        tries++;
+      }
+      if (typeof d3 === 'undefined') {
+        loading.textContent = 'Failed to load D3.';
+        return;
+      }
+
+      // Fetch graph data
+      const base = document.body.dataset.base || '';
+      const basePath = (window.location.pathname.split('/network')[0]) || '';
+      let graphData;
+      try {
+        const res = await fetch(basePath + '/network/graph.json');
+        graphData = await res.json();
+      } catch (err) {
+        loading.textContent = 'Failed to load graph data.';
+        console.error(err);
+        return;
+      }
+
+      const { nodes, edges } = graphData;
+
+      const CATEGORY_COLORS = {
+        foundational: '#2563eb', // blue
+        goal: '#16a34a',         // green
+        conditioning: '#dc2626', // red
+        sport: '#1e293b',        // slate-800 (dark)
+      };
+
+      // Dimensions
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+      // Clear loading
+      loading.style.display = 'none';
+
+      // Create groups
+      const root = d3.select(svg);
+      const linkGroup = root.append('g').attr('class', 'links');
+      const nodeGroup = root.append('g').attr('class', 'nodes');
+      const labelGroup = root.append('g').attr('class', 'labels');
+
+      // Clone edges so d3 can mutate them
+      const links = edges.map((e) => ({ source: e.source, target: e.target }));
+
+      // Force simulation
+      const simulation = d3
+        .forceSimulation(nodes)
+        .force(
+          'link',
+          d3
+            .forceLink(links)
+            .id((d) => d.id)
+            .distance(120)
+            .strength(0.6)
+        )
+        .force('charge', d3.forceManyBody().strength(-400))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(38));
+
+      // Draw links
+      const link = linkGroup
+        .selectAll('line')
+        .data(links)
+        .enter()
+        .append('line')
+        .attr('stroke', '#cbd5e1')
+        .attr('stroke-width', 1.2)
+        .attr('stroke-opacity', 0.6);
+
+      // Draw nodes
+      const node = nodeGroup
+        .selectAll('circle')
+        .data(nodes)
+        .enter()
+        .append('circle')
+        .attr('r', 20)
+        .attr('fill', (d) => CATEGORY_COLORS[d.category] || '#94a3b8')
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', 2)
+        .style('cursor', 'pointer')
+        .style('transition', 'r 150ms ease, opacity 150ms ease')
+        .on('mouseover', function (event, d) {
+          // Highlight this node and its neighbors
+          const connectedIds = new Set();
+          connectedIds.add(d.id);
+          links.forEach((l) => {
+            if (l.source.id === d.id) connectedIds.add(l.target.id);
+            if (l.target.id === d.id) connectedIds.add(l.source.id);
+          });
+
+          node.style('opacity', (n) => (connectedIds.has(n.id) ? 1 : 0.15));
+          link.style('stroke-opacity', (l) =>
+            l.source.id === d.id || l.target.id === d.id ? 0.9 : 0.05
+          );
+          link.style('stroke', (l) =>
+            l.source.id === d.id || l.target.id === d.id ? CATEGORY_COLORS[d.category] || '#64748b' : '#cbd5e1'
+          );
+          label.style('opacity', (n) => (connectedIds.has(n.id) ? 1 : 0.15));
+
+          const connectedTitles = nodes
+            .filter((n) => connectedIds.has(n.id) && n.id !== d.id)
+            .map((n) => n.title);
+          hoverEl.innerHTML =
+            '<strong class="text-slate-800">' +
+            d.title +
+            '</strong><br><span class="text-xs">Connected to ' +
+            connectedTitles.length +
+            ' concept' +
+            (connectedTitles.length === 1 ? '' : 's') +
+            '</span>';
+        })
+        .on('mouseout', function () {
+          node.style('opacity', 1);
+          link.style('stroke-opacity', 0.6);
+          link.style('stroke', '#cbd5e1');
+          label.style('opacity', 1);
+          hoverEl.textContent = 'Nothing selected';
+        })
+        .on('click', function (event, d) {
+          window.location.href = basePath + '/concepts/' + d.id + '/';
+        })
+        .call(
+          d3
+            .drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended)
+        );
+
+      // Draw labels
+      const label = labelGroup
+        .selectAll('text')
+        .data(nodes)
+        .enter()
+        .append('text')
+        .text((d) => d.icon)
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .attr('font-size', 16)
+        .style('pointer-events', 'none')
+        .style('user-select', 'none');
+
+      // Sim tick
+      simulation.on('tick', () => {
+        link
+          .attr('x1', (d) => d.source.x)
+          .attr('y1', (d) => d.source.y)
+          .attr('x2', (d) => d.target.x)
+          .attr('y2', (d) => d.target.y);
+
+        node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
+        label.attr('x', (d) => d.x).attr('y', (d) => d.y);
+      });
+
+      // Drag handlers
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+
+      // Stats
+      const categoryCounts = {};
+      nodes.forEach((n) => {
+        categoryCounts[n.category] = (categoryCounts[n.category] || 0) + 1;
+      });
+      statsEl.innerHTML =
+        '<div>' +
+        nodes.length +
+        ' concepts</div><div>' +
+        edges.length +
+        ' connections</div>';
+
+      // Keyboard escape to reset view
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          node.style('opacity', 1);
+          link.style('stroke-opacity', 0.6);
+          link.style('stroke', '#cbd5e1');
+          label.style('opacity', 1);
+          hoverEl.textContent = 'Nothing selected';
+        }
+      });
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        const newWidth = container.clientWidth;
+        const newHeight = container.clientHeight;
+        svg.setAttribute('viewBox', `0 0 ${newWidth} ${newHeight}`);
+        simulation.force('center', d3.forceCenter(newWidth / 2, newHeight / 2));
+        simulation.alpha(0.3).restart();
+      });
+    })();
+  </script>
+</BaseLayout>
