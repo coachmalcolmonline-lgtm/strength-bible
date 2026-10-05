@@ -169,6 +169,7 @@ const base = import.meta.env.BASE_URL;
       // Create groups
       const root = d3.select(svg);
       const linkGroup = root.append('g').attr('class', 'links');
+      const pulseGroup = root.append('g').attr('class', 'pulses');
       const nodeGroup = root.append('g').attr('class', 'nodes');
       const labelGroup = root.append('g').attr('class', 'labels');
 
@@ -237,6 +238,34 @@ const base = import.meta.env.BASE_URL;
         if (sMastered && tMastered) return 2.5;
         if (sMastered || tMastered) return 1.5;
         return 1.0;
+      }
+
+      // Pulse a node: expanding ring that fades out
+      function pulseNode(nodeDatum) {
+        const x = nodeDatum.x;
+        const y = nodeDatum.y;
+        if (x == null || y == null) return;
+
+        const color = CATEGORY_COLORS[nodeDatum.category] || '#64748b';
+
+        const ring = pulseGroup
+          .append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', radiusForMastery(nodeDatum.mastery || 0))
+          .attr('fill', 'none')
+          .attr('stroke', color)
+          .attr('stroke-width', 3)
+          .attr('opacity', 1);
+
+        ring
+          .transition()
+          .duration(1400)
+          .ease(d3.easeCubicOut)
+          .attr('r', radiusForMastery(nodeDatum.mastery || 0) + 45)
+          .attr('stroke-width', 0.5)
+          .attr('opacity', 0)
+          .remove();
       }
 
       // Draw nodes
@@ -358,6 +387,13 @@ const base = import.meta.env.BASE_URL;
         edges.length +
         ' connections</div>';
 
+      // Subtle entrance pulse for any already-mastered nodes
+      setTimeout(() => {
+        nodes.forEach((n) => {
+          if ((n.mastery || 0) >= 1) pulseNode(n);
+        });
+      }, 800);
+
       // Mastery summary
       const masteryEl = document.getElementById('network-mastery');
       if (masteryEl) {
@@ -377,10 +413,23 @@ const base = import.meta.env.BASE_URL;
       }
 
       // Listen for live mastery updates from the CFU component
-      window.addEventListener('bible:mastery-updated', function () {
+      window.addEventListener('bible:mastery-updated', function (event) {
+        // Snapshot prior mastery levels
+        const priorMastery = {};
+        nodes.forEach((n) => {
+          priorMastery[n.id] = n.mastery || 0;
+        });
+
         const newMastery = getMastery();
         nodes.forEach((n) => {
           n.mastery = newMastery[n.id] || 0;
+        });
+
+        // Pulse any node whose mastery level increased
+        nodes.forEach((n) => {
+          if ((n.mastery || 0) > (priorMastery[n.id] || 0)) {
+            pulseNode(n);
+          }
         });
 
         // Live resize + re-dim
