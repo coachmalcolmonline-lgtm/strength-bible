@@ -8,7 +8,7 @@ prerequisites:
   - "All core concepts (Progressive Overload, Technique Priority, Autoregulation, Deloading)"
   - "All barbell lifts (Back Squat, Front Squat, Deadlift, Press)"
   - "All bodyweight exercises (Push-up, Pull-up, Bodyweight Squat)"
-journals: ["training-log-general"]
+journals: ["training-log"]
 glossary_terms:
   - "progressive-overload"
   - "autoregulation"
