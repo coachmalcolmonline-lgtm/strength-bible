@@ -200,18 +200,30 @@ const base = import.meta.env.BASE_URL;
         .attr('stroke-width', 1.2)
         .attr('stroke-opacity', 0.6);
 
+      // Mastery-based radius and opacity
+      function radiusForMastery(level) {
+        // 0 → 14, 1 → 18, 2 → 22, 3 → 26, 4 → 30
+        return 14 + (level * 4);
+      }
+
+      function opacityForMastery(level) {
+        // 0 → 0.3 (dim), 1+ → 1 (full)
+        return level === 0 ? 0.3 : 1;
+      }
+
       // Draw nodes
       const node = nodeGroup
         .selectAll('circle')
         .data(nodes)
         .enter()
         .append('circle')
-        .attr('r', 20)
+        .attr('r', (d) => radiusForMastery(d.mastery || 0))
         .attr('fill', (d) => CATEGORY_COLORS[d.category] || '#94a3b8')
         .attr('stroke', '#ffffff')
         .attr('stroke-width', 2)
         .style('cursor', 'pointer')
-        .style('transition', 'r 150ms ease, opacity 150ms ease')
+        .style('opacity', (d) => opacityForMastery(d.mastery || 0))
+        .style('transition', 'r 300ms ease, opacity 300ms ease')
         .on('mouseover', function (event, d) {
           // Highlight this node and its neighbors
           const connectedIds = new Set();
@@ -222,6 +234,7 @@ const base = import.meta.env.BASE_URL;
           });
 
           node.style('opacity', (n) => (connectedIds.has(n.id) ? 1 : 0.15));
+          // (highlight overrides mastery dim while hovering)
           link.style('stroke-opacity', (l) =>
             l.source.id === d.id || l.target.id === d.id ? 0.9 : 0.05
           );
@@ -243,10 +256,10 @@ const base = import.meta.env.BASE_URL;
             '</span>';
         })
         .on('mouseout', function () {
-          node.style('opacity', 1);
+          node.style('opacity', (n) => opacityForMastery(n.mastery || 0));
           link.style('stroke-opacity', 0.6);
           link.style('stroke', '#cbd5e1');
-          label.style('opacity', 1);
+          label.style('opacity', (n) => opacityForMastery(n.mastery || 0));
           hoverEl.textContent = 'Nothing selected';
         })
         .on('click', function (event, d) {
@@ -270,8 +283,10 @@ const base = import.meta.env.BASE_URL;
         .attr('text-anchor', 'middle')
         .attr('dy', '0.35em')
         .attr('font-size', 16)
+        .style('opacity', (d) => opacityForMastery(d.mastery || 0))
         .style('pointer-events', 'none')
-        .style('user-select', 'none');
+        .style('user-select', 'none')
+        .style('transition', 'opacity 300ms ease');
 
       // Sim tick
       simulation.on('tick', () => {
@@ -337,7 +352,20 @@ const base = import.meta.env.BASE_URL;
         nodes.forEach((n) => {
           n.mastery = newMastery[n.id] || 0;
         });
-        // B2 will use this to resize nodes. For now just refresh the sidebar.
+
+        // Live resize + re-dim
+        node
+          .transition()
+          .duration(400)
+          .attr('r', (d) => radiusForMastery(d.mastery || 0))
+          .style('opacity', (d) => opacityForMastery(d.mastery || 0));
+
+        label
+          .transition()
+          .duration(400)
+          .style('opacity', (d) => opacityForMastery(d.mastery || 0));
+
+        // Refresh sidebar
         const updatedAny = nodes.filter((n) => n.mastery >= 1).length;
         const updatedAll = nodes.filter((n) => n.mastery >= 4).length;
         const updatedPercent = Math.round((updatedAny / totalConcepts) * 100);
@@ -355,10 +383,10 @@ const base = import.meta.env.BASE_URL;
       // Keyboard escape to reset view
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          node.style('opacity', 1);
+          node.style('opacity', (n) => opacityForMastery(n.mastery || 0));
           link.style('stroke-opacity', 0.6);
           link.style('stroke', '#cbd5e1');
-          label.style('opacity', 1);
+          label.style('opacity', (n) => opacityForMastery(n.mastery || 0));
           hoverEl.textContent = 'Nothing selected';
         }
       });
