@@ -1,10 +1,12 @@
 ---
 import ContentDetail from '../../layouts/ContentDetail.astro';
 import { getCollection } from 'astro:content';
+
 export async function getStaticPaths() {
   const items = await getCollection('concepts');
   return items.map(item => ({ params: { slug: item.slug }, props: { item } }));
 }
+
 const { item } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
@@ -14,6 +16,7 @@ const base = import.meta.env.BASE_URL;
   category="Concept"
   levels={item.data.levels ?? []}
   sources={item.data.sources}
+  videos={item.data.videos}
   backHref={`${base}/concepts`}
   backLabel="Back to Concepts"
   slug={item.slug}

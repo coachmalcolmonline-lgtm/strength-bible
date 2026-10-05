@@ -1,11 +1,5 @@
 import { defineCollection, z } from 'astro:content';
 
-const videoSchema = z.object({
-  title: z.string(),
-  url: z.string(),
-  description: z.string().optional(),
-});
-
 const frontMatter = defineCollection({
   schema: z.object({
     title: z.string(),
@@ -24,7 +18,6 @@ const concepts = defineCollection({
     levels: z.array(z.any()).optional(),
     journal: z.any().optional(),
     sources: z.array(z.string()).optional(),
-    videos: z.array(videoSchema).optional(),
   }),
 });
 

@@ -1,4 +1,11 @@
 ---
+videos:
+  - title: "What EXACTLY Is Progressive Overload?"
+    url: "https://youtu.be/HiJ1uLuTNxo"
+  - title: "What makes muscles grow? (TED-Ed)"
+    url: "https://youtu.be/2tM1LFFxeKg"
+  - title: "What actually makes muscles grow"
+    url: "https://youtu.be/UCcnxSJcNeA"
 title: "Progressive Overload"
 category: "Concept"
 icon: "🔥"

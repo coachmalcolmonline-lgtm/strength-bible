@@ -1,4 +1,15 @@
 ---
+videos:
+  - title: "What Is Muscle Soreness? (Galpin & Huberman)"
+    url: "https://youtu.be/swpmb4fNRLk"
+  - title: "Causes of Muscle Soreness (Coursera)"
+    url: "https://youtu.be/yhBM95mcx-c"
+  - title: "What Really Happens to Your Muscles During a Workout"
+    url: "https://youtu.be/F1AdR3QH_Rw"
+  - title: "A Journey Through Your Muscles"
+    url: "https://youtu.be/WgY5vPYlRn8"
+  - title: "How Your Muscles Work"
+    url: "https://youtu.be/9tfbVvfm96Y"
 title: "Deloading"
 category: "Concept"
 icon: "🔄"

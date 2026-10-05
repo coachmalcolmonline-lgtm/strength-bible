@@ -1,4 +1,9 @@
 ---
+videos:
+  - title: "The Best Reps, Sets And Rest When Training?"
+    url: "https://youtu.be/WxDaaFVXFyU"
+  - title: "The surprising reason our muscles get tired (TED-Ed)"
+    url: "https://youtu.be/rLsimrBoYXc"
 title: "Autoregulation"
 category: "Concept"
 icon: "🎚️"

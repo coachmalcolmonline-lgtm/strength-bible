@@ -1,4 +1,11 @@
 ---
+videos:
+  - title: "Muscle Contraction Explained!"
+    url: "https://youtu.be/DV7k0w35rg8"
+  - title: "Skeletal Muscle Structure and Function (3D Animation)"
+    url: "https://youtu.be/q_TuNJN9nXM"
+  - title: "Muscle Tissue | Structural Organization in Animals"
+    url: "https://youtu.be/mwGEP1JlTSk"
 title: "Technique Priority"
 category: "Concept"
 icon: "🎯"

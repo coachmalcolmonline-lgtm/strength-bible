@@ -1,7 +1,27 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import LevelBlock from '../components/LevelBlock.astro';
-const { title, icon, category, levels, sources, backHref, backLabel, slug } = Astro.props;
+import ConceptVideo from '../components/ConceptVideo.astro';
+
+interface Video {
+  title: string;
+  url: string;
+  description?: string;
+}
+
+interface Props {
+  title: string;
+  icon: string;
+  category: string;
+  levels: any[];
+  sources?: string[];
+  videos?: Video[];
+  backHref: string;
+  backLabel: string;
+  slug: string;
+}
+
+const { title, icon, category, levels, sources, videos, backHref, backLabel, slug } = Astro.props;
 ---
 <BaseLayout title={title}>
   <article class="max-w-3xl">
@@ -12,6 +32,7 @@ const { title, icon, category, levels, sources, backHref, backLabel, slug } = As
       <p class="text-slate-500 mt-2">{category}</p>
     </header>
     {levels.map((level, i) => <LevelBlock level={level} index={i} slug={slug} />)}
+    <ConceptVideo videos={videos} />
     {sources && sources.length > 0 && (
       <section class="mt-16 pt-8 border-t border-slate-200">
         <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3">Sources</h3>
