@@ -64,6 +64,10 @@ const journal = defineCollection({
     icon: z.string(),
     order: z.number().optional(),
     type: z.string().optional(),
+    program: z.string().optional(),
+    cycle_length_weeks: z.number().optional(),
+    sessions_per_week: z.number().optional(),
+    auto_generate_threshold: z.number().optional(),
     fields: z.array(z.any()).optional(),
     prompts: z.array(z.string()).optional(),
     frequency: z.string().optional(),
@@ -81,6 +85,19 @@ const stories = defineCollection({
   }),
 });
 
+const programs = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    category: z.string(),
+    icon: z.string(),
+    order: z.number().optional(),
+    type: z.string().optional(),
+    prerequisites: z.array(z.string()).optional(),
+    journals: z.array(z.string()).optional(),
+    glossary_terms: z.array(z.string()).optional(),
+  }),
+});
+
 export const collections = {
   'front-matter': frontMatter,
   concepts,
@@ -89,4 +106,5 @@ export const collections = {
   mobility,
   journal,
   stories,
+  programs,
 };

@@ -3,7 +3,6 @@ title: "General Program"
 category: "Program"
 icon: "🏗️"
 order: 1
-slug: "general"
 type: "foundation"
 prerequisites:
   - "All core concepts (Progressive Overload, Technique Priority, Autoregulation, Deloading)"

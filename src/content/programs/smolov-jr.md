@@ -3,7 +3,6 @@ title: "Smolov Jr."
 category: "Program"
 icon: "⚡"
 order: 9
-slug: "smolov-jr"
 type: "specialization"
 prerequisites:
   - "All core concepts"

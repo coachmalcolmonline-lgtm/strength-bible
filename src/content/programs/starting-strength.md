@@ -3,7 +3,6 @@ title: "Starting Strength"
 category: "Program"
 icon: "📖"
 order: 3
-slug: "starting-strength"
 type: "linear-progression"
 prerequisites:
   - "All core concepts (Progressive Overload, Technique Priority, Autoregulation, Deloading)"

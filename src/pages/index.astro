@@ -6,13 +6,15 @@ const concepts = (await getCollection('concepts')).sort((a, b) => (a.data.order 
 const lifts = (await getCollection('lifts')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const bodyweight = (await getCollection('bodyweight')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const mobility = (await getCollection('mobility')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const programs = (await getCollection('programs')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const base = import.meta.env.BASE_URL;
 
 const sections = [
-  { title: 'Concepts', items: concepts, path: 'concepts' },
-  { title: 'Lifts', items: lifts, path: 'lifts' },
-  { title: 'Bodyweight', items: bodyweight, path: 'bodyweight' },
-  { title: 'Mobility', items: mobility, path: 'mobility' },
+  { title: 'Concepts', items: concepts, path: 'concepts', blurb: 'Foundational ideas that drive training.' },
+  { title: 'Training Programs', items: programs, path: 'programs', blurb: 'Nine programs from foundation to specialization.' },
+  { title: 'Lifts', items: lifts, path: 'lifts', blurb: 'The main barbell lifts, taught at four levels.' },
+  { title: 'Bodyweight', items: bodyweight, path: 'bodyweight', blurb: 'Movements that build strength without equipment.' },
+  { title: 'Mobility', items: mobility, path: 'mobility', blurb: 'Flows that keep you moving well.' },
 ];
 ---
 
@@ -21,13 +23,16 @@ const sections = [
     <h1 class="text-5xl font-bold mb-4 tracking-tight">The Strength B.I.B.L.E.</h1>
     <p class="text-xl text-slate-600 mb-2">Basic Instructions Before Lifting Everything.</p>
     <p class="text-slate-500 max-w-2xl">
-      A progressive, interactive training system for high-school athletes — and anyone who wants to build strength intelligently.
+      A progressive, interactive training system for anyone serious about understanding and developing strength.
     </p>
   </section>
 
   {sections.map(section => (
     <section class="mb-14">
-      <h2 class="text-2xl font-semibold mb-6 pb-2 border-b border-slate-200">{section.title}</h2>
+      <div class="mb-6 pb-2 border-b border-slate-200">
+        <h2 class="text-2xl font-semibold">{section.title}</h2>
+        <p class="text-sm text-slate-500 mt-1">{section.blurb}</p>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {section.items.map(item => (
           <a

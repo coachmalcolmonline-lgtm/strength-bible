@@ -3,7 +3,6 @@ title: "Smolov"
 category: "Program"
 icon: "🔥"
 order: 8
-slug: "smolov"
 type: "specialization"
 prerequisites:
   - "All core concepts"

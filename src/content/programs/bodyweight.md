@@ -3,7 +3,6 @@ title: "Bodyweight Program"
 category: "Program"
 icon: "🤸"
 order: 2
-slug: "bodyweight"
 type: "foundation"
 prerequisites:
   - "All core concepts (Progressive Overload, Technique Priority, Autoregulation, Deloading)"

@@ -3,7 +3,6 @@ title: "Wendler 5/3/1"
 category: "Program"
 icon: "🔢"
 order: 5
-slug: "wendler-531"
 type: "monthly-cycle"
 prerequisites:
   - "All core concepts"

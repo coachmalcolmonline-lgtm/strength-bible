@@ -3,7 +3,6 @@ title: "Texas Method"
 category: "Program"
 icon: "🤠"
 order: 6
-slug: "texas-method"
 type: "weekly-progression"
 prerequisites:
   - "All core concepts"

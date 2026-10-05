@@ -3,7 +3,6 @@ title: "PPL (Push/Pull/Legs)"
 category: "Program"
 icon: "🔀"
 order: 7
-slug: "ppl"
 type: "hypertrophy-split"
 prerequisites:
   - "All core concepts"

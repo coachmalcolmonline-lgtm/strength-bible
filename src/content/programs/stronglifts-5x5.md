@@ -3,7 +3,6 @@ title: "StrongLifts 5x5"
 category: "Program"
 icon: "5️⃣"
 order: 4
-slug: "stronglifts-5x5"
 type: "linear-progression"
 prerequisites:
   - "All core concepts"
