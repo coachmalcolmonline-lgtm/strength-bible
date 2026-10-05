@@ -28,25 +28,29 @@ const dataLevel = level ?? 1;
 </div>
 <script>
   const PREFIX = 'bible:';
-  function saveMastery(slug: string, level: number) {
+  function saveMastery(slug, level) {
     if (!slug) return;
     try {
       const raw = localStorage.getItem(PREFIX + 'mastery');
       const mastery = raw ? JSON.parse(raw) : {};
-      mastery[slug] = Math.max(mastery[slug] ?? 0, level);
+      const prev = mastery[slug] ?? 0;
+      mastery[slug] = Math.max(prev, level);
       localStorage.setItem(PREFIX + 'mastery', JSON.stringify(mastery));
+      if (mastery[slug] > prev) {
+        window.dispatchEvent(new CustomEvent('bible:mastery-updated', { detail: { slug, level: mastery[slug] } }));
+      }
     } catch {}
   }
 
   document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
+    const target = e.target;
     if (!target.classList.contains('cfu-option')) return;
-    const cfu = target.closest('.cfu') as HTMLElement;
+    const cfu = target.closest('.cfu');
     if (!cfu) return;
     const isCorrect = target.dataset.correct === 'true';
-    const result = cfu.querySelector('.cfu-result') as HTMLElement;
+    const result = cfu.querySelector('.cfu-result');
     cfu.querySelectorAll('.cfu-option').forEach((btn) => {
-      (btn as HTMLButtonElement).disabled = true;
+      btn.disabled = true;
       btn.classList.remove('bg-white');
     });
     if (isCorrect) {
@@ -59,7 +63,7 @@ const dataLevel = level ?? 1;
     } else {
       target.classList.add('bg-red-100', 'border-red-500');
       cfu.querySelectorAll('.cfu-option').forEach((btn) => {
-        if ((btn as HTMLElement).dataset.correct === 'true') btn.classList.add('bg-green-100', 'border-green-500');
+        if (btn.dataset.correct === 'true') btn.classList.add('bg-green-100', 'border-green-500');
       });
       result.textContent = 'Not quite. Correct answer shown in green.';
       result.className = 'cfu-result mt-4 text-sm font-semibold text-red-700';

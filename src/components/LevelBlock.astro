@@ -4,25 +4,37 @@ const { level, index, slug } = Astro.props;
 const levelNumber = level.level ?? index + 1;
 const levelNames = { 1: '8th Grade', 2: 'High School Senior', 3: 'College', 4: 'PhD / Scientific Depth' };
 ---
-<section class="mb-12" id={`level-${levelNumber}`}>
-  <div class="flex items-center gap-3 mb-4">
-    <span class="px-3 py-1 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-full">Level {levelNumber}</span>
-    <span class="text-sm text-slate-500">{levelNames[levelNumber]}</span>
-  </div>
-  <h2 class="text-2xl font-semibold mb-4">{level.title}</h2>
-  <div class="prose prose-slate max-w-none whitespace-pre-line text-slate-700 leading-relaxed mb-6">{level.body}</div>
-  {level.cfu && <CFU question={level.cfu.question} options={level.cfu.options} correctIndex={level.cfu.correct_index} slug={slug} level={levelNumber} />}
-  {level.stories && level.stories.length > 0 && (
-    <div class="mt-6 flex flex-wrap gap-3">
-      {level.stories.map((story) => (
-        <a href={`${import.meta.env.BASE_URL}/stories/${story.id}`} class="story-link inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-slate-700 transition" data-story-id={story.id}>
-          <span>{story.icon}</span>
-          <span>{story.title}</span>
-          <span class="story-badge hidden text-xs px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded font-medium">revisit</span>
-        </a>
-      ))}
+<section
+  class="level-section mb-12"
+  id={`level-${levelNumber}`}
+  data-level={String(levelNumber)}
+  data-slug={slug}
+>
+  <div class="level-content">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="px-3 py-1 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-full">Level {levelNumber}</span>
+      <span class="text-sm text-slate-500">{levelNames[levelNumber]}</span>
     </div>
-  )}
+    <h2 class="text-2xl font-semibold mb-4">{level.title}</h2>
+    <div class="prose prose-slate max-w-none whitespace-pre-line text-slate-700 leading-relaxed mb-6">{level.body}</div>
+    {level.cfu && <CFU question={level.cfu.question} options={level.cfu.options} correctIndex={level.cfu.correct_index} slug={slug} level={levelNumber} />}
+    {level.stories && level.stories.length > 0 && (
+      <div class="mt-6 flex flex-wrap gap-3">
+        {level.stories.map((story) => (
+          <a href={`${import.meta.env.BASE_URL}/stories/${story.id}`} class="story-link inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-slate-700 transition" data-story-id={story.id}>
+            <span>{story.icon}</span>
+            <span>{story.title}</span>
+            <span class="story-badge hidden text-xs px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded font-medium">revisit</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+  <div class="level-lock-overlay hidden p-6 bg-slate-100 border border-slate-200 rounded-lg text-center">
+    <div class="text-3xl mb-2">🔒</div>
+    <div class="text-sm font-semibold text-slate-700 mb-1">Level {levelNumber} — Locked</div>
+    <div class="text-xs text-slate-500">Pass Level {levelNumber - 1}'s Check for Understanding to unlock.</div>
+  </div>
 </section>
 <script>
   const PREFIX = 'bible:';
@@ -33,6 +45,14 @@ const levelNames = { 1: '8th Grade', 2: 'High School Senior', 3: 'College', 4: '
       const raw = localStorage.getItem(PREFIX + 'stories');
       return raw ? JSON.parse(raw) : [];
     } catch { return []; }
+  }
+
+  function getMastery(slug) {
+    try {
+      const raw = localStorage.getItem(PREFIX + 'mastery');
+      const m = raw ? JSON.parse(raw) : {};
+      return m[slug] ?? 0;
+    } catch { return 0; }
   }
 
   function markOpened(id) {
@@ -59,13 +79,42 @@ const levelNames = { 1: '8th Grade', 2: 'High School Senior', 3: 'College', 4: '
     });
   }
 
+  function paintLocks() {
+    const sections = Array.from(document.querySelectorAll('.level-section'));
+    if (sections.length === 0) return;
+    const slug = sections[0].dataset.slug || '';
+    const mastered = getMastery(slug);
+
+    sections.forEach((section) => {
+      const lvl = parseInt(section.dataset.level || '1', 10);
+      const isLocked = lvl > (mastered + 1);
+      const content = section.querySelector('.level-content');
+      const overlay = section.querySelector('.level-lock-overlay');
+      if (!content || !overlay) return;
+
+      if (isLocked) {
+        content.classList.add('hidden');
+        overlay.classList.remove('hidden');
+      } else {
+        content.classList.remove('hidden');
+        overlay.classList.add('hidden');
+      }
+    });
+  }
+
   document.addEventListener('click', (e) => {
     const link = e.target.closest('.story-link');
-    if (!link) return;
-    const id = link.dataset.storyId;
-    if (!id) return;
-    markOpened(id);
+    if (link) {
+      const id = link.dataset.storyId;
+      if (id) markOpened(id);
+    }
   });
 
   paintBadges();
+  paintLocks();
+
+  window.addEventListener('bible:mastery-updated', paintLocks);
+  window.addEventListener('storage', (e) => {
+    if (e.key === PREFIX + 'mastery') paintLocks();
+  });
 </script>
