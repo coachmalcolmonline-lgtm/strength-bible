@@ -294,6 +294,11 @@ sources:
   - "Ebben et al. (2005) -- Strength and conditioning for baseball"
   - "Szymanski et al. (2009) -- Baseball-specific training"
   - "Fleisig et al. (1995) -- Kinetics of pitching"
+related_concepts:
+  - sport-specific-training
+  - power
+  - speed
+  - measurable-repeatable
 ---
 
 # Baseball / Softball Training

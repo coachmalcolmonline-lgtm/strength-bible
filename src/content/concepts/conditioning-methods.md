@@ -255,6 +255,10 @@ sources:
   - "Seiler (2010) — Polarized training"
   - "Buchheit & Laursen (2013) — HIIT in team sports"
   - "Poole et al. (2016) — Critical power"
+related_concepts:
+  - energy-systems
+  - conditioning-for-strength-athletes
+  - measurable-repeatable
 ---
 
 # Conditioning Methods

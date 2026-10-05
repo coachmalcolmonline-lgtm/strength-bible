@@ -308,6 +308,11 @@ sources:
   - "Bradley et al. (2009) -- High-intensity running in soccer"
   - "Petersen et al. (2011) -- Nordic hamstring prevention"
   - "Walden et al. (2012) -- FIFA 11+ injury prevention"
+related_concepts:
+  - sport-specific-training
+  - conditioning-methods
+  - speed
+  - measurable-repeatable
 ---
 
 # Soccer Training

@@ -325,6 +325,11 @@ sources:
   - "Bompa & Haff (2009) -- Periodization"
   - "Research on tackle football skill positions (transferable)"
   - "Research on soccer physical demands (aerobic component)"
+related_concepts:
+  - sport-specific-training
+  - speed
+  - power
+  - measurable-repeatable
 ---
 
 # Flag Football Training

@@ -297,6 +297,11 @@ sources:
   - "Mandell et al. (2017) -- Basketball strength and conditioning"
   - "Hewett et al. (2005) -- ACL injury prevention"
   - "Ben Abdelkrim et al. (2010) -- Basketball game demands"
+related_concepts:
+  - sport-specific-training
+  - power
+  - speed
+  - measurable-repeatable
 ---
 
 # Basketball Training

@@ -304,6 +304,11 @@ sources:
   - "Spencer et al. (2004) -- Field hockey movement patterns"
   - "Gabbett (2010) -- GPS analysis in field hockey"
   - "Petersen et al. (2011) -- Nordic hamstring prevention"
+related_concepts:
+  - sport-specific-training
+  - speed
+  - conditioning-methods
+  - measurable-repeatable
 ---
 
 # Field Hockey Training

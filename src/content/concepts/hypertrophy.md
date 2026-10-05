@@ -150,6 +150,10 @@ sources:
   - "Refalo et al. (2023) — Proximity to failure meta-analysis"
   - "Pelland et al. (2024) — Volume dose-response meta-regression"
   - "NSCA Essentials of Strength Training and Conditioning (4th ed.)"
+related_concepts:
+  - progressive-overload
+  - measurable-repeatable
+  - scaling
 ---
 
 # Hypertrophy

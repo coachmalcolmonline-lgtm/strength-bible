@@ -185,6 +185,11 @@ sources:
   - "Mero et al. (1992) — Biomechanics of sprint running"
   - "Weyand et al. (2000) — Faster top running speeds via ground forces"
   - "Seitz & Haff (2016) — Post-activation potentiation meta-analysis"
+related_concepts:
+  - power
+  - progressive-overload
+  - measurable-repeatable
+  - scaling
 ---
 
 # Speed

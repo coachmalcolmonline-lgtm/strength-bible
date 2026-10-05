@@ -210,6 +210,10 @@ sources:
   - "Nedeltcheva et al. (2010) — Sleep and body composition"
   - "Mountjoy et al. (2018) — RED-S IOC consensus statement"
   - "NSCA Essentials of Strength Training and Conditioning (4th ed.)"
+related_concepts:
+  - hypertrophy
+  - measurable-repeatable
+  - scaling
 ---
 
 # Weight Management

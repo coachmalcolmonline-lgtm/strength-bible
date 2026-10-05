@@ -117,3 +117,7 @@ Paste them in this format:
     Title: [exact YouTube title]
 
 Or just paste URLs -- I'll fetch the titles and map them.
+
+## Cross-link coverage (as of Competition concept)
+
+All 21 concepts now have related_concepts fields for the Concept Network visualization.

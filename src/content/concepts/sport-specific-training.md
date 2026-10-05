@@ -237,6 +237,11 @@ sources:
   - "Hoffman et al. (1990) -- In-season strength maintenance"
   - "Rønnestad et al. (2011) -- In-season maintenance in team sports"
   - "Bompa & Haff (2009) -- Periodization"
+related_concepts:
+  - progressive-overload
+  - power
+  - speed
+  - measurable-repeatable
 ---
 
 # Sport-Specific Training

@@ -221,6 +221,11 @@ sources:
   - "Cormie et al. (2011) — Optimal loading for power"
   - "Turner et al. (2015) — Plyometric training guidelines"
   - "Samozino et al. (2012) — Force-velocity profiling"
+related_concepts:
+  - speed
+  - hypertrophy
+  - progressive-overload
+  - measurable-repeatable
 ---
 
 # Power

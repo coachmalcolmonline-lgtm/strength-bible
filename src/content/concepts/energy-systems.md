@@ -209,6 +209,10 @@ sources:
   - "Buchheit & Laursen (2013) — HIIT in team sports"
   - "Jones & Carter (2000) — Lactate threshold"
   - "Poole et al. (2016) — Critical power"
+related_concepts:
+  - conditioning-methods
+  - conditioning-for-strength-athletes
+  - recovery-between-sessions
 ---
 
 # Energy Systems
