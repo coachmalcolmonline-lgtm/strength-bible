@@ -1,41 +1,47 @@
 # CHECKPOINT — The Strength B.I.B.L.E.
 
 **Last Updated:** 2026-10-04
-**Session ID:** 009
-**Phase:** 1 — Content Development — COMPLETE
+**Session ID:** 013
+**Phase:** 2 — DEPLOYED
+
+## Live Site
+
+**URL:** https://coachmalcolmonline-lgtm.github.io/strength-bible/
+**Repo:** https://github.com/coachmalcolmonline-lgtm/strength-bible
+**Hosting:** GitHub Pages (public repo, free tier)
+**Auto-Deploy:** GitHub Actions on every push to main
+**Workflow:** .github/workflows/deploy.yml
 
 ## Current State
 
-- Content Files: 50 total
-  - 4 front-matter
-  - 4 concepts
-  - 4 lifts
-  - 3 bodyweight
-  - 3 mobility
-  - 5 journal templates
-  - 27 stories
-- Phase 1 status: COMPLETE
+- Content Files: 50 (Phase 1 complete)
+- Astro site: fully functional
+- All routes working: concepts, lifts, bodyweight, mobility, journal, stories
+- CFU component: interactive, correct/incorrect feedback works
+- BaseLayout: sticky header, Home link, Back to top
+- Deployment: automatic on every push
 
-## What's Next — Phase 2
+## How to Update the Live Site
 
-1. Initialize Astro project
-2. Build component library (CFU, StoryIcon, MasteryTracker, etc.)
-3. Create page routes
-4. Style with Tailwind
-5. Implement localStorage for journal memory
-6. Deploy to GitHub Pages
+1. Edit any markdown file in src/content/
+2. Run: ./scripts/checkpoint.sh "message"
+3. Wait 1–2 minutes for GitHub Actions
+4. Refresh the live URL
 
-## Corrections Applied
+## What's Next (Priority Order)
 
-- Back Squat L2 CFU: adductor correction applied
-- Deep Squat: "third-world squat" label corrected to "deep squat / natural sitting position"
+1. Add READMEs for training programs (General, Wendler 5/3/1, Texas Method, etc.)
+2. Add training log templates: general, Wendler 5/3/1, Texas Method
+3. Implement localStorage journal memory (adaptive mastery tracking)
+4. Build Mastery Tracker page
+5. Video links (13) — pending confirmation
+6. Content editing queue: update/edit/swap CFUs, stories, anecdotes
 
 ## Open Decisions
 
 - Video links (13) — pending confirmation
-- License — TBD
-- Astro stack confirmed for Phase 2
+- Custom domain — optional, deferred
 
 ## Prompt for Next Session
 
-You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Phase 1 (content) is COMPLETE. Next task: begin Phase 2 — initialize the Astro project, set up basic rendering, and get the first page live. Do not re-plan. Execute.
+You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. **Phase 2 (deployment) is COMPLETE.** Live site at https://coachmalcolmonline-lgtm.github.io/strength-bible/. Next task: add training program READMEs and templates (Wendler 5/3/1, Texas Method, General), then implement localStorage for journal memory. Do not re-plan. Execute.
