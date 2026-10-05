@@ -3,10 +3,15 @@ interface Props {
   question: string;
   options: string[];
   correctIndex: number;
+  slug?: string;
+  level?: number;
 }
-const { question, options, correctIndex } = Astro.props;
+const { question, options, correctIndex, slug, level } = Astro.props;
+const dataLevel = level ?? 1;
 ---
-<div class="cfu mt-8 p-6 bg-amber-50 border border-amber-200 rounded-lg">
+<div class="cfu mt-8 p-6 bg-amber-50 border border-amber-200 rounded-lg"
+     data-slug={slug ?? ''}
+     data-level={String(dataLevel)}>
   <div class="text-xs uppercase tracking-wider text-amber-700 font-semibold mb-2">Check for Understanding</div>
   <p class="text-lg font-medium text-slate-900 mb-4">{question}</p>
   <div class="space-y-2">
@@ -22,25 +27,39 @@ const { question, options, correctIndex } = Astro.props;
   <div class="cfu-result mt-4 hidden text-sm font-semibold"></div>
 </div>
 <script>
+  const PREFIX = 'bible:';
+  function saveMastery(slug: string, level: number) {
+    if (!slug) return;
+    try {
+      const raw = localStorage.getItem(PREFIX + 'mastery');
+      const mastery = raw ? JSON.parse(raw) : {};
+      mastery[slug] = Math.max(mastery[slug] ?? 0, level);
+      localStorage.setItem(PREFIX + 'mastery', JSON.stringify(mastery));
+    } catch {}
+  }
+
   document.addEventListener('click', (e) => {
-    const target = e.target;
+    const target = e.target as HTMLElement;
     if (!target.classList.contains('cfu-option')) return;
-    const cfu = target.closest('.cfu');
+    const cfu = target.closest('.cfu') as HTMLElement;
     if (!cfu) return;
     const isCorrect = target.dataset.correct === 'true';
-    const result = cfu.querySelector('.cfu-result');
+    const result = cfu.querySelector('.cfu-result') as HTMLElement;
     cfu.querySelectorAll('.cfu-option').forEach((btn) => {
-      btn.disabled = true;
+      (btn as HTMLButtonElement).disabled = true;
       btn.classList.remove('bg-white');
     });
     if (isCorrect) {
       target.classList.add('bg-green-100', 'border-green-500');
       result.textContent = 'Correct. Next level unlocked.';
       result.className = 'cfu-result mt-4 text-sm font-semibold text-green-700';
+      const slug = cfu.dataset.slug || '';
+      const level = parseInt(cfu.dataset.level || '1', 10);
+      saveMastery(slug, level);
     } else {
       target.classList.add('bg-red-100', 'border-red-500');
       cfu.querySelectorAll('.cfu-option').forEach((btn) => {
-        if (btn.dataset.correct === 'true') btn.classList.add('bg-green-100', 'border-green-500');
+        if ((btn as HTMLElement).dataset.correct === 'true') btn.classList.add('bg-green-100', 'border-green-500');
       });
       result.textContent = 'Not quite. Correct answer shown in green.';
       result.className = 'cfu-result mt-4 text-sm font-semibold text-red-700';

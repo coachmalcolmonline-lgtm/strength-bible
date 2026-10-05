@@ -1,7 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import LevelBlock from '../components/LevelBlock.astro';
-const { title, icon, category, levels, sources, backHref, backLabel } = Astro.props;
+const { title, icon, category, levels, sources, backHref, backLabel, slug } = Astro.props;
 ---
 <BaseLayout title={title}>
   <article class="max-w-3xl">
@@ -11,7 +11,7 @@ const { title, icon, category, levels, sources, backHref, backLabel } = Astro.pr
       <h1 class="text-4xl font-bold tracking-tight">{title}</h1>
       <p class="text-slate-500 mt-2">{category}</p>
     </header>
-    {levels.map((level, i) => <LevelBlock level={level} index={i} />)}
+    {levels.map((level, i) => <LevelBlock level={level} index={i} slug={slug} />)}
     {sources && sources.length > 0 && (
       <section class="mt-16 pt-8 border-t border-slate-200">
         <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3">Sources</h3>
