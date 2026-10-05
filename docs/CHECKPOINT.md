@@ -1,39 +1,39 @@
 # CHECKPOINT — The Strength B.I.B.L.E.
 
 **Last Updated:** 2026-10-05
-**Session ID:** 019
-**Phase:** 3 — COMPLETE
+**Session ID:** 020
+**Phase:** 4 — localStorage Journal Memory (in progress)
 
 ## Live Site
 
-**URL:** https://coachmalcolmonline-lgtm.github.io/strength-bible/
-**Repo:** https://github.com/coachmalcolmonline-lgtm/strength-bible
-**Hosting:** GitHub Pages (public, free tier)
-**Auto-Deploy:** GitHub Actions on every push
+https://coachmalcolmonline-lgtm.github.io/strength-bible/
 
 ## Current State
 
-- Content Files: 68
-- All routes working: /, /concepts/, /programs/, /lifts/, /bodyweight/, /mobility/, /journal/, /stories/
-- All 9 program detail pages working
-- All 9 program journals working
-- Licenses: MIT (code) + CC BY-NC-SA 4.0 (content)
+- Phase 3: COMPLETE (all 9 programs + 9 journals deployed)
+- Phase 4: IN PROGRESS
+  - ✅ localStorage utility built (src/lib/storage.ts)
+  - ✅ CFU component saves mastery on correct answer
+  - ✅ LevelBlock passes slug + level to CFU
+  - ✅ Story links mark opened (LevelBlock)
+  - ✅ Mastery Tracker page built at /mastery
+  - ✅ Export/Import buttons built (not yet tested)
+  - ✅ Mastery verified working: Back Squat, Progressive Overload, Technique Priority
 
-## Phase 3 — COMPLETE
+## What's Next (Phase 4 continued)
 
-All 9 programs and 9 journal templates built, wired into site, deployed.
+1. Journal entries save to localStorage (not yet wired)
+2. Journal form UI to enter training data
+3. Reflection prompts read stored journal data
+4. Auto-resurface stories at 6-week intervals
+5. Mastery page shows program progress
+6. Progressive level unlocking (Level N visible only when N-1 passed)
 
-## What's Next — Phase 4
+## What's Next (Phase 5)
 
-1. localStorage journal memory
-   - Track mastery level per concept
-   - Remember which stories have been opened
-   - Store training log entries
-   - Store journal reflections
-2. Mastery Tracker page (personal dashboard)
-3. CFU progress tracking (unlock next level on pass)
-4. Story revisit prompts (6-week intervals)
-5. Export/Import data (JSON backup)
+1. Living Glossary system
+2. Media Library + Favorites
+3. Speed, Conditioning, Nutrition modules
 
 ## Community Commitment
 
@@ -41,4 +41,4 @@ Free for Malcolm X Shabazz High School (Newark) — one year in-person installat
 
 ## Prompt for Next Session
 
-You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Phase 3 (Training Programs) is COMPLETE and deployed. Next task: build Phase 4 — localStorage journal memory, Mastery Tracker page, CFU progress tracking. Do not re-plan. Execute.
+You are continuing work on The Strength B.I.B.L.E. project. Read this checkpoint, then read docs/build-spec.md. Phase 4 (localStorage) is in progress. CFU mastery tracking works. Next task: build journal entry saving, reflection data wiring, and journal form UI. Do not re-plan. Execute.
