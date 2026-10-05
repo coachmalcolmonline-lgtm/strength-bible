@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import JournalEntryForm from '../../components/JournalEntryForm.astro';
+import ReflectionPanel from '../../components/ReflectionPanel.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -25,6 +26,12 @@ const isTemplate = item.data.type === 'program-log' || item.data.type === 'templ
       <Content />
     </div>
   </article>
+
+  {isTemplate && (
+    <div class="max-w-3xl">
+      <ReflectionPanel templateSlug={item.slug} />
+    </div>
+  )}
 
   {isTemplate && (
     <section class="mt-12 max-w-3xl border-t border-slate-200 pt-10">

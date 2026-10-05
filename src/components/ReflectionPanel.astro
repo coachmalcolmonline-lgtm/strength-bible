@@ -1,0 +1,140 @@
+---
+interface Props {
+  templateSlug: string;
+}
+const { templateSlug } = Astro.props;
+---
+<div class="reflection-panel mt-8 p-6 bg-slate-50 border border-slate-200 rounded-lg" data-template-slug={templateSlug}>
+  <div class="flex items-center gap-2 mb-4">
+    <span class="text-xl">💭</span>
+    <h3 class="text-lg font-semibold text-slate-900">Reflection</h3>
+  </div>
+  <div class="reflection-content space-y-3 text-slate-700">
+    <p class="text-sm italic text-slate-500">Loading your data...</p>
+  </div>
+</div>
+
+<script>
+  const PREFIX = 'bible:';
+
+  function getJournalEntries(templateSlug: string): any[] {
+    try {
+      const raw = localStorage.getItem(PREFIX + 'journal');
+      const all = raw ? JSON.parse(raw) : [];
+      return all.filter((e: any) => e.templateSlug === templateSlug);
+    } catch { return []; }
+  }
+
+  function daysAgo(dateStr: string): number {
+    const d = new Date(dateStr);
+    const now = new Date();
+    return Math.floor((now.getTime() - d.getTime()) / 86400000);
+  }
+
+  function computeStats(entries: any[]) {
+    const weekEntries = entries.filter((e: any) => daysAgo(e.date) <= 7);
+    const rpes = entries.map((e: any) => parseFloat(e.data?.rpe)).filter((n: number) => !isNaN(n));
+    const avgRpe = rpes.length > 0 ? (rpes.reduce((a: number, b: number) => a + b, 0) / rpes.length).toFixed(1) : null;
+    const readiness = entries.map((e: any) => parseFloat(e.data?.readiness)).filter((n: number) => !isNaN(n));
+    const avgReadiness = readiness.length > 0 ? (readiness.reduce((a: number, b: number) => a + b, 0) / readiness.length).toFixed(1) : null;
+
+    const byLift: Record<string, { first: number; last: number; firstDate: string; lastDate: string }> = {};
+    entries.forEach((e: any) => {
+      const lift = e.data?.lift;
+      const weight = parseFloat(e.data?.weight);
+      if (!lift || isNaN(weight)) return;
+      if (!byLift[lift]) {
+        byLift[lift] = { first: weight, last: weight, firstDate: e.date, lastDate: e.date };
+      } else {
+        if (new Date(e.date) < new Date(byLift[lift].firstDate)) {
+          byLift[lift].first = weight;
+          byLift[lift].firstDate = e.date;
+        }
+        if (new Date(e.date) > new Date(byLift[lift].lastDate)) {
+          byLift[lift].last = weight;
+          byLift[lift].lastDate = e.date;
+        }
+      }
+    });
+
+    return {
+      total: entries.length,
+      thisWeek: weekEntries.length,
+      avgRpe,
+      avgReadiness,
+      byLift,
+    };
+  }
+
+  function buildPrompts(stats: any, entries: any[]): string[] {
+    const prompts: string[] = [];
+
+    if (stats.total === 0) {
+      return [
+        'No entries yet. Log your first training session to unlock personalized reflections.',
+      ];
+    }
+
+    if (stats.thisWeek > 0) {
+      prompts.push(`You logged <strong>${stats.thisWeek}</strong> session${stats.thisWeek === 1 ? '' : 's'} this week.`);
+    } else if (stats.total > 0) {
+      prompts.push(`No sessions logged this week. What's been in the way?`);
+    }
+
+    if (stats.avgRpe) {
+      if (parseFloat(stats.avgRpe) >= 8.5) {
+        prompts.push(`Average RPE across all sessions: <strong>${stats.avgRpe}</strong>. That's on the high end. Are you managing recovery?`);
+      } else if (parseFloat(stats.avgRpe) <= 6.5) {
+        prompts.push(`Average RPE across all sessions: <strong>${stats.avgRpe}</strong>. That's on the low end. Is there room to push?`);
+      } else {
+        prompts.push(`Average RPE: <strong>${stats.avgRpe}</strong>. In the sweet spot. What's working?`);
+      }
+    }
+
+    if (stats.avgReadiness) {
+      if (parseFloat(stats.avgReadiness) <= 5) {
+        prompts.push(`Average readiness: <strong>${stats.avgReadiness}/10</strong>. Low. What's draining you outside the gym?`);
+      } else if (parseFloat(stats.avgReadiness) >= 8) {
+        prompts.push(`Average readiness: <strong>${stats.avgReadiness}/10</strong>. High. Are you capitalizing on it?`);
+      }
+    }
+
+    const liftNames = Object.keys(stats.byLift);
+    liftNames.forEach((lift) => {
+      const l = stats.byLift[lift];
+      const delta = l.last - l.first;
+      if (delta > 0) {
+        prompts.push(`<strong>${lift}</strong>: ${l.first} → ${l.last} lbs (+${delta}). What changed?`);
+      } else if (delta < 0) {
+        prompts.push(`<strong>${lift}</strong>: ${l.first} → ${l.last} lbs (${delta}). Deload, reset, or something else?`);
+      }
+    });
+
+    return prompts;
+  }
+
+  function paint() {
+    const panel = document.querySelector('.reflection-panel') as HTMLElement;
+    if (!panel) return;
+    const templateSlug = panel.dataset.templateSlug || '';
+    const entries = getJournalEntries(templateSlug);
+    const stats = computeStats(entries);
+    const prompts = buildPrompts(stats, entries);
+    const content = panel.querySelector('.reflection-content') as HTMLElement;
+    if (!content) return;
+
+    if (prompts.length === 0) {
+      content.innerHTML = '<p class="text-sm text-slate-500">Log some sessions to see personalized reflections here.</p>';
+      return;
+    }
+
+    content.innerHTML = prompts.map((p) => `
+      <div class="flex gap-3 items-start">
+        <span class="text-slate-400 mt-1">→</span>
+        <p class="text-sm">${p}</p>
+      </div>
+    `).join('');
+  }
+
+  paint();
+</script>
