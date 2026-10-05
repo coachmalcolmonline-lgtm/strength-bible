@@ -52,7 +52,18 @@ const base = import.meta.env.BASE_URL;
           <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">
             Your Mastery
           </div>
-          <div id="network-mastery" class="text-sm text-slate-700 mb-5">
+          <div id="network-mastery" class="text-sm text-slate-700 mb-3">
+            Loading...
+          </div>
+
+          <div id="network-progress-bar" class="w-full h-2 bg-slate-200 rounded-full mb-5 overflow-hidden">
+            <div id="network-progress-fill" class="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-500" style="width: 0%;"></div>
+          </div>
+
+          <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">
+            By Category
+          </div>
+          <div id="network-categories" class="text-xs text-slate-700 mb-5 space-y-1">
             Loading...
           </div>
 
@@ -303,10 +314,23 @@ const base = import.meta.env.BASE_URL;
           const connectedTitles = nodes
             .filter((n) => connectedIds.has(n.id) && n.id !== d.id)
             .map((n) => n.title);
+
+          const level = d.mastery || 0;
+          const levelLabel =
+            level === 0
+              ? '<span class="text-slate-500 italic">Not yet started</span>'
+              : '<span class="text-slate-700">Level ' +
+                level +
+                ' of 4' +
+                (level === 4 ? ' — full mastery' : '') +
+                '</span>';
+
           hoverEl.innerHTML =
             '<strong class="text-slate-800">' +
             d.title +
-            '</strong><br><span class="text-xs">Connected to ' +
+            '</strong><br>' +
+            levelLabel +
+            '<br><span class="text-xs">Connected to ' +
             connectedTitles.length +
             ' concept' +
             (connectedTitles.length === 1 ? '' : 's') +
@@ -394,23 +418,83 @@ const base = import.meta.env.BASE_URL;
         });
       }, 800);
 
-      // Mastery summary
+      // Mastery summary + progress bar + category breakdown
       const masteryEl = document.getElementById('network-mastery');
-      if (masteryEl) {
-        if (masteredAny === 0) {
-          masteryEl.innerHTML =
-            '<div class="text-slate-500 italic">No concepts mastered yet</div>' +
-            '<div class="text-xs text-slate-500 mt-1">Pass a CFU on any concept to start lighting up the network.</div>';
-        } else {
-          masteryEl.innerHTML =
-            '<div class="text-slate-800 font-medium">' +
-            masteredAny + ' of ' + totalConcepts + ' concepts started</div>' +
-            '<div class="text-xs text-slate-600 mt-1">' +
-            percentMastered + '% of the network touched</div>' +
-            '<div class="text-xs text-slate-600 mt-1">' +
-            masteredAll + ' concepts at full mastery (Level 4)</div>';
+      const progressFill = document.getElementById('network-progress-fill');
+      const categoriesEl = document.getElementById('network-categories');
+
+      const CATEGORY_LABELS = {
+        foundational: 'Foundational',
+        goal: 'Goal Tracks',
+        conditioning: 'Conditioning',
+        sport: 'Sport-Specific',
+      };
+
+      const CATEGORY_HEX = {
+        foundational: '#2563eb',
+        goal: '#16a34a',
+        conditioning: '#dc2626',
+        sport: '#1e293b',
+      };
+
+      function updateMasteryDisplay() {
+        const anyCount = nodes.filter((n) => (n.mastery || 0) >= 1).length;
+        const allCount = nodes.filter((n) => (n.mastery || 0) >= 4).length;
+        const pct = Math.round((anyCount / totalConcepts) * 100);
+
+        if (masteryEl) {
+          if (anyCount === 0) {
+            masteryEl.innerHTML =
+              '<div class="text-slate-500 italic">No concepts mastered yet</div>' +
+              '<div class="text-xs text-slate-500 mt-1">Pass a CFU on any concept to start lighting up the network.</div>';
+          } else {
+            masteryEl.innerHTML =
+              '<div class="text-slate-800 font-medium">' +
+              anyCount + ' of ' + totalConcepts + ' concepts started</div>' +
+              '<div class="text-xs text-slate-600 mt-1">' +
+              pct + '% of the network touched</div>' +
+              '<div class="text-xs text-slate-600 mt-1">' +
+              allCount + ' at full mastery (Level 4)</div>';
+          }
+        }
+
+        if (progressFill) {
+          progressFill.style.width = pct + '%';
+        }
+
+        if (categoriesEl) {
+          const groups = {};
+          nodes.forEach((n) => {
+            const cat = n.category || 'foundational';
+            if (!groups[cat]) groups[cat] = { total: 0, mastered: 0 };
+            groups[cat].total += 1;
+            if ((n.mastery || 0) >= 1) groups[cat].mastered += 1;
+          });
+
+          let html = '';
+          ['foundational', 'goal', 'conditioning', 'sport'].forEach((cat) => {
+            if (!groups[cat]) return;
+            const g = groups[cat];
+            html +=
+              '<div class="flex items-center gap-2">' +
+              '<span class="inline-block w-2 h-2 rounded-full" style="background:' +
+              CATEGORY_HEX[cat] +
+              ';"></span>' +
+              '<span class="flex-1">' +
+              CATEGORY_LABELS[cat] +
+              '</span>' +
+              '<span class="text-slate-500">' +
+              g.mastered +
+              '/' +
+              g.total +
+              '</span>' +
+              '</div>';
+          });
+          categoriesEl.innerHTML = html;
         }
       }
+
+      updateMasteryDisplay();
 
       // Listen for live mastery updates from the CFU component
       window.addEventListener('bible:mastery-updated', function (event) {
@@ -453,18 +537,7 @@ const base = import.meta.env.BASE_URL;
           .style('stroke-width', (l) => edgeWidth(l.source, l.target));
 
         // Refresh sidebar
-        const updatedAny = nodes.filter((n) => n.mastery >= 1).length;
-        const updatedAll = nodes.filter((n) => n.mastery >= 4).length;
-        const updatedPercent = Math.round((updatedAny / totalConcepts) * 100);
-        if (masteryEl) {
-          masteryEl.innerHTML =
-            '<div class="text-slate-800 font-medium">' +
-            updatedAny + ' of ' + totalConcepts + ' concepts started</div>' +
-            '<div class="text-xs text-slate-600 mt-1">' +
-            updatedPercent + '% of the network touched</div>' +
-            '<div class="text-xs text-slate-600 mt-1">' +
-            updatedAll + ' concepts at full mastery (Level 4)</div>';
-        }
+        updateMasteryDisplay();
       });
 
       // Keyboard escape to reset view
