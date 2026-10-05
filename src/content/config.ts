@@ -50,6 +50,7 @@ const bodyweight = defineCollection({
     levels: z.array(z.any()).optional(),
     journal: z.any().optional(),
     sources: z.array(z.string()).optional(),
+    related_concepts: z.array(z.string()).optional(),
   }),
 });
 
